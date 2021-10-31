@@ -41,6 +41,7 @@ app.innerHTML = `
 
   const init = () => {
     const dropzone = document.querySelector('.dropzone');
+    const list = document.querySelector('.list');
 
     dropzone.addEventListener('dragenter', (e) =>
       e.target.classList.add('active')
@@ -62,11 +63,34 @@ app.innerHTML = `
       handleFileUpload(files);
     });
 
-    const isAllowedType = (file) => ['image/png', 'image/jpeg', 'image/svg+xml'].includes(file.type);
+    // const isAllowedType = (file) => ['image/png', 'image/jpeg', 'image/svg+xml'].includes(file.type);
 
     const handleFileUpload = (files) => {
-      const filesToUpload = [...files].filter(isAllowedType);
+      const filesToUpload = [...files];
+      // const filesToUpload = [...files].filter(isAllowedType);
       console.log(filesToUpload);
+      filesToUpload.forEach(showFilePreview);
+    };
+
+    const showFilePreview = (file) => {
+      const reader = new FileReader();
+      // console.log(reader)
+      // console.log(list,file)
+      reader.readAsDataURL(file);
+      reader.addEventListener('load', (e) => {
+        console.log(e.target.result) // file type & img src ... 
+        const div = document.createElement('div');
+        div.innerHTML = `
+          <div style="display: flex;">
+            <img 
+              src="${e.target.result}"
+              alt="${file.name}"
+              style="width: 20px; margin-right: 10px;">
+            <p>${file.name} <span>${file.size} bytes</span></p>
+          </div>
+        `;
+        list.append(div);
+      });
     };
 
     document.addEventListener('dragover', (e) => e.preventDefault());
