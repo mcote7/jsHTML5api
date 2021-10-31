@@ -5,7 +5,9 @@ app.innerHTML = `
   <h1>JavaScript HTML5 APIs</h1>
   <div class="uploader">
     <h2>Upload your files ✨</h2>
+    <p>Accepts only .png, .jpg, .svg</p>
     <div class="dropzone">📂 Drag to Upload</div>
+    <div class="list"></div>
   </div>
   <style>
     .uploader {
