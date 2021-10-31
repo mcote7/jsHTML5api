@@ -57,7 +57,16 @@ app.innerHTML = `
       e.target.classList.remove('active');
       const { files } = e.dataTransfer;
       console.log(files);
+      handleFileUpload(files);
     });
+
+    const isAllowedType = (file) => ['image/png', 'image/jpeg', 'image/svg+xml'].includes(file.type);
+
+    const handleFileUpload = (files) => {
+      const filesToUpload = [...files].filter(isAllowedType);
+      console.log(filesToUpload);
+    };
+
     document.addEventListener('dragover', (e) => e.preventDefault());
     document.addEventListener('drop', (e) => e.preventDefault());
   };
