@@ -1,11 +1,12 @@
 import '../assets/css/style.css';
-
+ // <p>Accepts only .png, .jpg, .svg</p>
 const app = document.getElementById('app');
 app.innerHTML = `
   <h1>JavaScript HTML5 APIs</h1>
   <div class="uploader">
     <h2>Upload your files ✨</h2>
-    <p>Accepts only .png, .jpg, .svg</p>
+    <p>Accepts *</p>
+    <input type="file" class="files" accept="image/*" multiple>
     <div class="dropzone">📂 Drag to Upload</div>
     <div class="list"></div>
   </div>
@@ -42,6 +43,7 @@ app.innerHTML = `
   const init = () => {
     const dropzone = document.querySelector('.dropzone');
     const list = document.querySelector('.list');
+    const files = document.querySelector('.files');
 
     dropzone.addEventListener('dragenter', (e) =>
       e.target.classList.add('active')
@@ -62,15 +64,27 @@ app.innerHTML = `
       console.log(files);
       handleFileUpload(files);
     });
+    
+    files.addEventListener('change', (e) => {
+      const { files } = e.target;
+      handleFileUpload(files);
+    });
 
-    // const isAllowedType = (file) => ['image/png', 'image/jpeg', 'image/svg+xml'].includes(file.type);
-
-    const handleFileUpload = (files) => {
+    const handleFileUpload = async (files) => {
       const filesToUpload = [...files];
       // const filesToUpload = [...files].filter(isAllowedType);
       console.log(filesToUpload);
       filesToUpload.forEach(showFilePreview);
+      // filesToUpload.forEach((file)=> showFilePreview(file)); // ⭐ is same as above shorthand ... 
+      const uploaded = await uploadFiles(filesToUpload);
+      if (uploaded) {
+        for (const image of uploaded.images) {
+          console.log(image);
+        }
+      }
     };
+
+    // const isAllowedType = (file) => ['image/png', 'image/jpeg', 'image/svg+xml'].includes(file.type);
 
     const showFilePreview = (file) => {
       const reader = new FileReader();
@@ -91,6 +105,18 @@ app.innerHTML = `
         `;
         list.append(div);
       });
+    };
+
+    const uploadFiles = async (files) => {
+      const form = new FormData();
+      [...files].forEach((file) => form.append(file.name, file));
+      console.log([...form.entries()]);
+      // https://glitch.com/edit/#!/dragdropfiles
+      const request = await fetch('//dragdropfiles.glitch.me/upload', {
+        method: 'POST',
+        body: form,
+      });
+      return await request.json();
     };
 
     document.addEventListener('dragover', (e) => e.preventDefault());
